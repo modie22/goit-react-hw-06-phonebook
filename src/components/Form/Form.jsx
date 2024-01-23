@@ -1,38 +1,41 @@
-import { Component } from 'react';
+
+import { useState } from 'react';
 import css from './Form.module.css';
 
-class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
 
-  handleChange = e => {
+function ContactForm({onSubmit}) {
+
+  const [nameS,setNameS]= useState('');
+  const [numberS,setNumberS]= useState('');
+
+  const handleChange = e => {
     const { name, value } = e.currentTarget;
-
-    this.setState({ [name]: value });
+    if(name==='name')
+    setNameS(value);
+    if(name==='number')
+    setNumberS(value);
   };
 
-  handleSubmit = e => {
+  const  handleSubmit = e => {
     e.preventDefault();
+    onSubmit({name:nameS,number:numberS});
 
-    this.props.onSubmit(this.state);
-
-    this.setState({ name: '', number: '' });
+    setNameS('')
+    setNumberS('')
   };
 
-  render() {
-    const { name, number } = this.state;
+
+
     return (
-      <form className={css.form} onSubmit={this.handleSubmit}>
+      <form className={css.form} onSubmit={handleSubmit}>
         <label className={css.label}>
           Name
           <input
             className={css.input}
             type="text"
             name="name"
-            value={name}
-            onChange={this.handleChange}
+            value={nameS}
+            onChange={handleChange}
             placeholder="Ivan Ivanov"
           />
         </label>
@@ -42,8 +45,8 @@ class ContactForm extends Component {
             className={css.input}
             type="text"
             name="number"
-            value={number}
-            onChange={this.handleChange}
+            value={numberS}
+            onChange={handleChange}
             placeholder="380*********"
           />
         </label>
@@ -52,7 +55,7 @@ class ContactForm extends Component {
         </button>
       </form>
     );
-  }
+  
 }
 
 export default ContactForm;
