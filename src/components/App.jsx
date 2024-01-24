@@ -5,20 +5,26 @@ import ContactForm from './Form/Form';
 import Filter from './Filter/Filter';
 import ContactList from './List/List';
 import { useSelector ,useDispatch } from 'react-redux';
-import { update,remove,filterSearch } from '../redux/contactSlice';
+import { update} from '../redux/contactSlice';
+import { useCallback, useEffect } from 'react';
+import { changeName, changeNumber } from '../redux/contactSlice';
 
 function App() {
   const dispatch = useDispatch();
   const contactsR = useSelector(state=>state.contact.value);
-  const filterR = useSelector(state=>state.contact.filter)
+  const name = useSelector(state => state.contact.inputName);
+  const number = useSelector(state => state.contact.inputNumber);
+  
 
-  const addContact = ({ name, number }) => {
+  const addContact = useCallback(() => {
+    if(name==='' || number===''){
+      return;
+    }
     const contact = {
       id: shortid.generate(),
       name,
       number,
     };
-
     if (
       contactsR.find(
         contact => contact.name.toLowerCase() === name.toLowerCase()
@@ -36,33 +42,20 @@ function App() {
     } else {
       dispatch(update(contact));
     }
-  };
- console.log(filterR);
-  const deleteContact = contactId => {
-    dispatch(remove(contactId));
-  };
-
-  const changeFilter = e => {
-    dispatch(filterSearch(e.currentTarget.value))
-  };
-
-  const getVisibleContacts = () => {
-    return contactsR.filter(contact =>
-      contact.name.toLowerCase().includes(filterR)
-    );
-  };
-  const visibleContacts = getVisibleContacts();
+    dispatch(changeName(''));
+    dispatch(changeNumber(''));
+  },[contactsR, dispatch, name, number]);
+  useEffect(()=>{
+    addContact();
+  },[addContact])
   return (
     <Container>
       <h1>Phonebook</h1>
       <ContactForm onSubmit={addContact} />
       <h2>Contacts</h2>
-      {contactsR.length > 1 && <Filter value={filterR} onChange={changeFilter} />}
+      {contactsR.length > 1 && <Filter />}
       {contactsR.length > 0 ? (
-        <ContactList
-          contacts={visibleContacts}
-          onDeleteContact={deleteContact}
-        />
+        <ContactList/>
       ) : (
         <p>Your phonebook is empty. Please add contact.</p>
       )}

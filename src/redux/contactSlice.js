@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const contactSlice = createSlice({
     name: 'contactForm',
-    initialState:{value:[],filter:''},
+    initialState:{value:[],filter:'',inputName:'',inputNumber:''},
     reducers:{
         update(state,action){
         state.value.push(action.payload)
@@ -12,9 +12,18 @@ export const contactSlice = createSlice({
         },
         filterSearch(state,action){
         state.filter=action.payload.toLowerCase();
+        },
+        changeName(state,action){
+            state.inputName=action.payload;
+        },
+        changeNumber(state,action){
+        state.inputNumber=action.payload;
         }
+
     }
 })
 export const {update}= contactSlice.actions;
+export const {changeName}= contactSlice.actions;
+export const {changeNumber}= contactSlice.actions;
 export const {filterSearch}= contactSlice.actions;
 export const {remove}= contactSlice.actions;
